@@ -12,6 +12,14 @@ const indexRouter = require("./routes/index");
 
 const app = express();
 
+// database configuration
+mongoose.set("strictQuery", false);
+async function main() {
+	const mongoDb = process.env.DB_STRING;
+	await mongoose.connect(mongoDb);
+}
+main().catch((e) => console.log(e));
+
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
