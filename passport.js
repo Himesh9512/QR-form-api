@@ -1,7 +1,12 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const session = require("express-session");
+const JWTStrategy = passportJWT.Strategy;
+const ExtractJWT = passportJWT.ExtractJwt;
 const bcrypt = require("bcryptjs");
+
+const dotenv = require("dotenv");
+dotenv.config();
 
 const User = require("./models/User");
 
@@ -35,3 +40,22 @@ passport.deserializeUser(async (id, done) => {
 		done(err);
 	}
 });
+
+passport.use(
+	new JWTStrategy(
+		{
+			jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+			secretOrKey: process.env.JWT_ACCESS_TOKEN,
+		},
+		async function (jwtPayload, done) {
+			//find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
+			return await User.findOne({ id: jwtPayload.sub })
+				.then((user) => {
+					return done(null, user);
+				})
+				.catch((err) => {
+					return done(err);
+				});
+		},
+	),
+);
