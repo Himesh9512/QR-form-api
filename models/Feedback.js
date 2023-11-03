@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+const options = {
+	toJSON: { virtuals: true },
+};
+
 const FeedbackSchema = new Schema({
 	timestamp: { type: Date, default: Date.now },
 	FeedbackType: String,
@@ -14,6 +18,10 @@ const FeedbackSchema = new Schema({
 		fullname: String,
 		phoneNumber: String,
 	},
+});
+
+FeedbackSchema.virtual("date_formatted").get(function () {
+	return DateTime.fromJSDate(this.date).toLocaleString(DateTime.DATE_MED);
 });
 
 module.exports = mongoose.model("Feedback", FeedbackSchema);
