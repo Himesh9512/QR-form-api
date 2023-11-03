@@ -4,11 +4,14 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const dotenv = require("dotenv");
+const session = require("express-session");
+const passport = require("passport");
 const mongoose = require("mongoose");
 
 dotenv.config();
 
 const indexRouter = require("./routes/index");
+const apiRouter = require("./routes/api");
 
 const app = express();
 
@@ -20,6 +23,11 @@ async function main() {
 }
 main().catch((e) => console.log(e));
 
+require("./passport");
+
+app.use(session({ secret: "secretkey", resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -27,6 +35,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
+app.use("/api", apiRouter);
+app.use("*", (req, res, next) => {
+	res.status(404).json({ Error: "Page not Found" });
+});
 
 app.use(function (req, res, next) {
 	next(createError(404));
