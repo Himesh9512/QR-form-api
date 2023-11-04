@@ -28,8 +28,8 @@ main().catch((e) => console.log(e));
 require("./passport");
 
 app.use(session({ secret: "secretkey", resave: false, saveUninitialized: true }));
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(logger("dev"));
 app.use(cors());
 app.use(express.json());

@@ -15,11 +15,9 @@ const FeedbackSchema = new Schema({
 	subject: String,
 	description: String,
 	isReviewed: { type: Boolean, default: false },
-	user: {
-		fullname: { type: String, required: true },
-		email: { type: String, required: true },
-		phoneNumber: String,
-	},
+	fullname: { type: String, required: true },
+	email: { type: String, required: true },
+	phoneNumber: String,
 });
 
 FeedbackSchema.virtual("date_formatted").get(function () {

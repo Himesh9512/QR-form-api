@@ -2,8 +2,6 @@ const asyncHandler = require("express-async-handler");
 const District = require("../models/District");
 
 exports.location_get = asyncHandler(async (req, res, next) => {
-	// const locations = await District.find().populate("talukas");
-
 	await District.find()
 		.populate({
 			path: "talukas",
