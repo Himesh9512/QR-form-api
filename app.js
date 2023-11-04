@@ -4,6 +4,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
 const mongoose = require("mongoose");
@@ -17,6 +18,7 @@ const app = express();
 
 // database configuration
 mongoose.set("strictQuery", false);
+mongoose.set("strictPopulate", false);
 async function main() {
 	const mongoDb = process.env.DB_STRING;
 	await mongoose.connect(mongoDb);
@@ -26,11 +28,12 @@ main().catch((e) => console.log(e));
 require("./passport");
 
 app.use(session({ secret: "secretkey", resave: false, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 app.use(logger("dev"));
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -51,7 +54,7 @@ app.use(function (err, req, res, next) {
 
 	// render the error page
 	res.status(err.status || 500);
-	res.render("error");
+	res.json({ data: "error" });
 });
 
 module.exports = app;

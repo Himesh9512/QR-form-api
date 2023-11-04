@@ -8,14 +8,16 @@ const options = {
 
 const FeedbackSchema = new Schema({
 	timestamp: { type: Date, default: Date.now },
-	FeedbackType: String,
+	FeedbackType: { type: String },
 	branch: { type: Schema.Types.ObjectId, ref: "Branch" },
 	district: String,
 	taluka: String,
 	subject: String,
 	description: String,
+	isReviewed: { type: Boolean, default: false },
 	user: {
-		fullname: String,
+		fullname: { type: String, required: true },
+		email: { type: String, required: true },
 		phoneNumber: String,
 	},
 });
