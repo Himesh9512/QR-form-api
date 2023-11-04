@@ -2,7 +2,6 @@ const asyncHandler = require("express-async-handler");
 const passport = require("passport");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
-const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 
 const dotenv = require("dotenv");
@@ -29,6 +28,27 @@ exports.user_login = (req, res, next) => {
 	})(req, res);
 };
 
-exports.user_register = (req, res, next) => {
-	return res.json({ data: "Not Implemented: User Register Post" });
-};
+exports.user_register = [
+	asyncHandler(async (req, res, next) => {
+		const password = req.body.password;
+
+		bcrypt.hash(password, 10, (err, hashPassword) => {
+			if (err) {
+				next(err);
+			} else {
+				req.body.password = hashPassword;
+				next();
+			}
+		});
+	}),
+	asyncHandler(async (req, res, next) => {
+		const user = User({
+			username: req.body.username,
+			password: req.body.password,
+			branch: req.body.branch,
+		});
+
+		user.save();
+		res.json(user);
+	}),
+];
