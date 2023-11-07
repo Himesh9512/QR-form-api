@@ -16,8 +16,8 @@ router.post("/login", userController.user_login);
 
 router.post("/register", userController.user_register);
 
-router.get("/feedback", feedbackController.feedback_get);
+router.get("/feedback", userController.jwtAuth, feedbackController.feedback_get);
 
-router.put("/feedback/:id", feedbackController.feedback_put);
+router.put("/feedback/:id", userController.jwtAuth, feedbackController.feedback_put);
 
 module.exports = router;
