@@ -5,10 +5,34 @@ const Branch = require("../models/Branch");
 const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 
+const emailSender = (username, email) => {
+	const { spawn } = require("child_process");
+
+	// Replace 'your_python_script.py' with the actual filename of your Python script.
+	const pythonScript = "sender.py";
+
+	// The data you want to pass from JavaScript to Python.
+	const dataToPass = `${username} , ${email}`;
+
+	// Run the Python script and send the data through standard input
+	const pythonProcess = spawn("python", [pythonScript]);
+
+	pythonProcess.stdin.write(dataToPass);
+	pythonProcess.stdin.end();
+
+	pythonProcess.stdout.on("data", (data) => {
+		console.log(`Python Script Output: ${data}`);
+	});
+
+	pythonProcess.stderr.on("data", (data) => {
+		console.error(`Python Script Error: ${data}`);
+	});
+};
+
 exports.feedback_post = asyncHandler(async (req, res, next) => {
 	const data = req.body;
 
-	const feedback = Feedback({
+	const feedback = await Feedback({
 		timestamp: new Date(),
 		FeedbackType: data.feedbackType,
 		branch: data.branch,
@@ -29,14 +53,12 @@ exports.feedback_post = asyncHandler(async (req, res, next) => {
 		});
 	}
 
-	feedback.save();
+	await feedback.save();
 	res.json(feedback);
 });
 
 exports.feedback_get = asyncHandler(async (req, res, next) => {
-	const branch = req.user.branch;
-
-	await Feedback.find({ branch: branch })
+	await Feedback.find({})
 		.then((result) => {
 			res.status(200).json({ feedback: result });
 		})
@@ -48,6 +70,7 @@ exports.feedback_get = asyncHandler(async (req, res, next) => {
 exports.feedback_put = asyncHandler(async (req, res, next) => {
 	await Feedback.findByIdAndUpdate(req.params.id, { isReviewed: true })
 		.then((result) => {
+			emailSender(result.fullname, result.email);
 			res.status(200).json(result);
 		})
 		.catch((err) => {
