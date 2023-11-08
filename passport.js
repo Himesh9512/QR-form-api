@@ -11,28 +11,27 @@ dotenv.config();
 
 const Branch = require("./models/Branch");
 
-const localOptions = {
-	usernameField: "branchId",
-	passwordField: "password",
-};
-
 passport.use(
-	localOptions,
-	new LocalStrategy(async (username, password, done) => {
-		try {
-			const user = await Branch.findOne({ branchId: username });
-			if (!user) {
-				return done(null, false, { message: "Incorrect branchId" });
+	new LocalStrategy(
+		{
+			usernameField: "branchId",
+		},
+		async (username, password, done) => {
+			try {
+				const user = await Branch.findOne({ branchId: username });
+				if (!user) {
+					return done(null, false, { message: "Incorrect branchId" });
+				}
+				const match = bcrypt.compare(password, user.password);
+				if (!match) {
+					return done(null, false, { message: "Incorrect password" });
+				}
+				return done(null, user);
+			} catch (e) {
+				return done(err);
 			}
-			const match = bcrypt.compare(password, user.password);
-			if (!match) {
-				return done(null, false, { message: "Incorrect password" });
-			}
-			return done(null, user);
-		} catch (e) {
-			return done(err);
-		}
-	}),
+		},
+	),
 );
 
 passport.serializeUser((user, done) => {

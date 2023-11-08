@@ -19,11 +19,11 @@ exports.user_login_post = (req, res, next) => {
 		}
 		req.login(user, (err) => {
 			if (err) {
-				res.send(err);
+				res.status(500).send(err);
 			}
 
 			const token = jwt.sign(user.toJSON(), process.env.JWT_ACCESS_TOKEN);
-			return res.json({ user, token });
+			return res.status(200).json({ user, token });
 		});
 	})(req, res);
 };
