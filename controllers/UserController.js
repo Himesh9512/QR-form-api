@@ -27,28 +27,3 @@ exports.user_login_post = (req, res, next) => {
 		});
 	})(req, res);
 };
-
-exports.user_register_post = [
-	asyncHandler(async (req, res, next) => {
-		const password = req.body.password;
-
-		bcrypt.hash(password, 10, (err, hashPassword) => {
-			if (err) {
-				next(err);
-			} else {
-				req.body.password = hashPassword;
-				next();
-			}
-		});
-	}),
-	asyncHandler(async (req, res, next) => {
-		const user = User({
-			username: req.body.username,
-			password: req.body.password,
-			branch: req.body.branch,
-		});
-
-		user.save();
-		res.json(user);
-	}),
-];

@@ -12,12 +12,14 @@ router.post("/feedback", feedbackController.feedback_create_post);
 router.get("/location", locationController.location_list_get);
 
 // admin (police authority)
-router.post("/login", userController.user_login_post);
-
-router.post("/register", userController.user_register_post);
+router.post("/auth/login", userController.user_login_post);
 
 router.get("/feedback", userController.jwtAuth, feedbackController.feedback_list_get);
 
 router.put("/feedback/:id", userController.jwtAuth, feedbackController.feedback_update_put);
+
+// super admin (root admin)
+
+router.post("/location/branch", locationController.branch_create_post);
 
 module.exports = router;

@@ -9,14 +9,20 @@ const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const User = require("./models/User");
+const Branch = require("./models/Branch");
+
+const localOptions = {
+	usernameField: "branchId",
+	passwordField: "password",
+};
 
 passport.use(
+	localOptions,
 	new LocalStrategy(async (username, password, done) => {
 		try {
-			const user = await User.findOne({ username: username });
+			const user = await Branch.findOne({ branchId: username });
 			if (!user) {
-				return done(null, false, { message: "Incorrect username" });
+				return done(null, false, { message: "Incorrect branchId" });
 			}
 			const match = bcrypt.compare(password, user.password);
 			if (!match) {

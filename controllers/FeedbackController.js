@@ -9,20 +9,21 @@ const token = process.env.COURIER_ACCESS_TOKEN;
 const courier = CourierClient({ authorizationToken: token });
 
 exports.feedback_create_post = asyncHandler(async (req, res, next) => {
-	const data = req.body;
+	const { feedbackType, branch, district, taluka, subject, description, fullname, email, phone } =
+		req.body;
 
 	const feedback = await Feedback({
 		timestamp: new Date(),
-		FeedbackType: data.feedbackType,
-		branch: data.branch,
-		district: data.district,
-		taluka: data.taluka,
-		subject: data.subject,
-		description: data.description,
+		FeedbackType: feedbackType,
+		branch: branch,
+		district: district,
+		taluka: taluka,
+		subject: subject,
+		description: description,
 		isReviewed: false,
-		fullname: data.fullname,
-		email: data.email,
-		phoneNumber: data.phone,
+		fullname: fullname,
+		email: email,
+		phoneNumber: phone,
 	});
 
 	await feedback.save();
