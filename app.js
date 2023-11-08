@@ -27,14 +27,14 @@ main().catch((e) => console.log(e));
 
 require("./passport");
 
-app.use(session({ secret: "secretkey", resave: false, saveUninitialized: true }));
+app.use(session({ secret: "secretkey", resave: true, saveUninitialized: true }));
 app.use(passport.initialize());
+app.use(cookieParser());
 app.use(passport.session());
 app.use(logger("dev"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);

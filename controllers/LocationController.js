@@ -82,3 +82,40 @@ exports.location_list_get = asyncHandler(async (req, res, next) => {
 
 	res.status(200).json({ district, taluka, branch });
 });
+
+exports.branch_change_password_post = [
+	asyncHandler(async (req, res, next) => {
+		const { branchId, password } = req.body;
+		const user = await Branch.findOne({ branchId: branchId });
+
+		if (!user) {
+			return res.status(401).json({ msg: "Invalid BranchId" });
+		}
+		const match = bcrypt.compare(password, user.password);
+		if (!match) {
+			return res.status(401).json({ msg: "Invalid Password" });
+		}
+		next();
+	}),
+	asyncHandler(async (req, res, next) => {
+		const password = req.body.newPassword;
+
+		console.log(password);
+		bcrypt.hash(password, 10, (err, hashPassword) => {
+			if (err) {
+				next(err);
+			} else {
+				req.body.newPassword = hashPassword;
+				next();
+			}
+		});
+	}),
+	asyncHandler(async (req, res, next) => {
+		await Branch.findOneAndUpdate(
+			{ branchId: req.body.branchId },
+			{ password: req.body.newPassword },
+		)
+			.then((result) => res.status(200).json(result))
+			.catch((err) => res.status(500).json(err));
+	}),
+];

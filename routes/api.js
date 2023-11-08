@@ -22,4 +22,10 @@ router.put("/feedback/:id", userController.jwtAuth, feedbackController.feedback_
 
 router.post("/location/branch", locationController.branch_create_post);
 
+router.post(
+	"/auth/password",
+	userController.jwtAuth,
+	locationController.branch_change_password_post,
+);
+
 module.exports = router;

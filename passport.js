@@ -40,7 +40,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
 	try {
-		const user = await User.findById(id);
+		const user = await Branch.findById(id);
 		done(null, user);
 	} catch (err) {
 		done(err);
@@ -55,7 +55,7 @@ passport.use(
 		},
 		async function (jwtPayload, done) {
 			//find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
-			return await User.findOne({ id: jwtPayload.sub })
+			return await Branch.findOne({ id: jwtPayload.sub })
 				.then((user) => {
 					return done(null, user);
 				})
