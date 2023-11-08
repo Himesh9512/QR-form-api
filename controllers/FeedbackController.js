@@ -8,7 +8,7 @@ dotenv.config();
 const token = process.env.COURIER_ACCESS_TOKEN;
 const courier = CourierClient({ authorizationToken: token });
 
-exports.feedback_post = asyncHandler(async (req, res, next) => {
+exports.feedback_create_post = asyncHandler(async (req, res, next) => {
 	const data = req.body;
 
 	const feedback = await Feedback({
@@ -29,7 +29,7 @@ exports.feedback_post = asyncHandler(async (req, res, next) => {
 	res.json(feedback);
 });
 
-exports.feedback_get = asyncHandler(async (req, res, next) => {
+exports.feedback_list_get = asyncHandler(async (req, res, next) => {
 	await Feedback.find({})
 		.then((result) => {
 			res.status(200).json({ feedback: result });
@@ -39,7 +39,7 @@ exports.feedback_get = asyncHandler(async (req, res, next) => {
 		});
 });
 
-exports.feedback_put = asyncHandler(async (req, res, next) => {
+exports.feedback_update_put = asyncHandler(async (req, res, next) => {
 	const result = await Feedback.findByIdAndUpdate(req.params.id, { isReviewed: true });
 
 	if (result) {

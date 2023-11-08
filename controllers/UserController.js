@@ -9,7 +9,7 @@ dotenv.config();
 
 exports.jwtAuth = passport.authenticate("jwt", { session: false });
 
-exports.user_login = (req, res, next) => {
+exports.user_login_post = (req, res, next) => {
 	passport.authenticate("local", (err, user, info) => {
 		if (err || !user) {
 			return res.status(400).json({
@@ -28,7 +28,7 @@ exports.user_login = (req, res, next) => {
 	})(req, res);
 };
 
-exports.user_register = [
+exports.user_register_post = [
 	asyncHandler(async (req, res, next) => {
 		const password = req.body.password;
 
